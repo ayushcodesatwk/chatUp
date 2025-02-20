@@ -108,6 +108,7 @@ export const logout = async (req, res) => {
   }
 };
 
+// update profile pic
 export const updateProfile = async (req, res) => {
   try {
     const { profilePic } = req.body;
@@ -128,7 +129,6 @@ export const updateProfile = async (req, res) => {
     //     folder: "profilePics",
     //  })
 
-
     //hover over new to know more about it
     const updatedUser = await User.findByIdAndUpdate(
       userId,
@@ -139,9 +139,8 @@ export const updateProfile = async (req, res) => {
         new: true,
       }
     );
- 
-    res.status(200).json(updatedUser);
 
+    res.status(200).json(updatedUser);
   } catch (error) {
     console.log("Error updating profile-", error);
     res.status(500).json({
@@ -150,13 +149,11 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-
+// check authentication
 export const checkAuth = async (req, res) => {
-
-    try {
-      res.status(200).json(req.user);
-    } catch (error) {
-        console.log(" Error checking authentication", error.message)
-        
-      }
-}
+  try {
+    res.status(200).json(req.user);
+  } catch (error) {
+    console.log(" Error checking authentication", error.message);
+  }
+};
