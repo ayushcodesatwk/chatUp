@@ -1,8 +1,11 @@
 import express from 'express';
 import cookieParser from "cookie-parser";
-import router from "./routes/user.js";
+import authRoutes from './routes/auth.route.js';
+import messageRoutes from './routes/message.route.js';
+
 import dotenv from "dotenv";
 import { connectDB } from './lib/db.js';
+
 
 //config before accessing env variables
 dotenv.config();
@@ -18,7 +21,9 @@ app.use(cookieParser());
 
 
 //all routes
-app.use(router);
+app.use("/api/auth", authRoutes);
+app.use("/api/message", messageRoutes);
+
 
 app.listen(port, () => {
     console.log("Server started on port- ", port);

@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import User from "../models/userModel.js";
 import generateToken from "../lib/utils.js";
+import cloudinary from "../lib/cloudinary.js";
 
 // creating a new user
 export const signup = async (req, res) => {
@@ -70,22 +71,20 @@ export const login = async (req, res) => {
     //compare the password with the user.password
     const isMatch = await bcrypt.compare(password, user.password);
 
-    if(!isMatch){
-        return res.status(400).json({
-            message: "Invalid credentials",
-        });
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Invalid credentials",
+      });
     }
 
     generateToken(user._id);
-
 
     res.status(200).json({
       _id: user._id,
       name: user.name,
       email: user.email,
       pic: user.pic,
-    })
-
+    });
   } catch (error) {
     console.log("login error-", error);
     res.status(500).json({
@@ -96,23 +95,68 @@ export const login = async (req, res) => {
 
 // logout user
 export const logout = async (req, res) => {
-
-    try {
-        //simply clear the cookie
-        res.cookie("jwt", "", {
-            httpOnly: true,
-            expires: 0,
-        })
-
-    } catch (error) {
-        res.status(500).json({
-            message: "Internal server error: failed to logout",
-        })
-    }
-
-}
+  try {
+    //simply clear the cookie
+    res.cookie("jwt", "", {
+      httpOnly: true,
+      expires: 0,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error: failed to logout",
+    });
+  }
+};
 
 export const updateProfile = async (req, res) => {
+  try {
+    const { profilePic } = req.body;
 
-    
+    const userId = req.user._id;
+
+    if (!profilePic) {
+      return res.status(400).json({
+        message: "Please upload a profile picture",
+      });
+    }
+
+    const uploadResponse = await cloudinary.uploader.upload(profilePic);
+
+    //FOR MORE ORGANISED UPLOAD
+    // const uploadResponse = await cloudinary.uploader.upload(profilePic, {
+    //     upload_preset: "chatApp",
+    //     folder: "profilePics",
+    //  })
+
+
+    //hover over new to know more about it
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        profilePic: uploadResponse.secure_url,
+      },
+      {
+        new: true,
+      }
+    );
+ 
+    res.status(200).json(updatedUser);
+
+  } catch (error) {
+    console.log("Error updating profile-", error);
+    res.status(500).json({
+      message: ("error uploading image", error.message),
+    });
+  }
+};
+
+
+export const checkAuth = async (req, res) => {
+
+    try {
+      res.status(200).json(req.user);
+    } catch (error) {
+        console.log(" Error checking authentication", error.message)
+        
+      }
 }
