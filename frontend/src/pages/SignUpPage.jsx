@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAuthStore } from "../store/userAuthStore";
 import { MessageSquare, Eye, EyeOff, Lock, User, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,7 +15,38 @@ const SignUpPage = () => {
   const { signUp, isSigningUp } = useAuthStore();
 
   const handleSubmit = (e) => {
-    e.prevenDefault();
+    e.preventDefault();
+
+    const success = validateForm();
+
+    console.log("succeed validating form--", success);
+
+    if (success === true) signUp(formData);
+  };
+
+  // this will return true if the form is valid
+  const validateForm = () => {
+    if (formData.fullName === "") {
+      return toast.error("full name required");
+    }
+
+    if (formData.email === "") {
+      return toast.error("email required");
+    }
+
+    if (
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+        formData.email
+      ) === false
+    ) {
+      return toast.error("invalid email");
+    }
+
+    if (formData.password.length < 6) {
+      return toast.error("password required");
+    }
+
+    return true;
   };
 
   return (
@@ -36,6 +68,7 @@ const SignUpPage = () => {
               </div>
             </div>
 
+            {/* form */}
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* for full name */}
               <div className="form-control">
@@ -110,6 +143,7 @@ const SignUpPage = () => {
                   </button>
                 </div>
               </div>
+
               {/* submit button */}
               <button
                 type="submit"
@@ -135,14 +169,7 @@ const SignUpPage = () => {
             </div>
           </div>
         </div>
-
-        {/* right side */}
-        <div>
-                
-        </div>
       </div>
-
-
     </>
   );
 };
