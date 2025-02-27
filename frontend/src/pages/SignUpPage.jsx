@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAuthStore } from "../store/userAuthStore";
-import { MessageSquare, Eye, EyeOff, Lock, User, Mail } from "lucide-react";
+import { MessageSquare, Eye, EyeOff, Lock, User, Mail, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -34,13 +34,9 @@ const SignUpPage = () => {
       return toast.error("email required");
     }
 
-    if (
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
-        formData.email
-      ) === false
-    ) {
-      return toast.error("invalid email");
-    }
+    if (/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email ) === false) {
+        return toast.error("invalid email");
+      }
 
     if (formData.password.length < 6) {
       return toast.error("password required");
@@ -53,7 +49,7 @@ const SignUpPage = () => {
     <>
       <div className="min-h-screen grid lg: grid-cols-2">
         {/* left side */}
-        <div className="flex flex-col justify-center items-center p-6 sm:p-12">
+        <div className="flex flex-col justify-center items-center p-6 sm:p-12 ">
           <div className="w-full max-w-md space-y-8">
             {/* LOGO */}
             <div className="text-center mb-8">
@@ -161,12 +157,12 @@ const SignUpPage = () => {
               </button>
             </form>
 
-            <div className="text-center">
-              <p className="text-base-content/60">Already have an account? </p>
-              <Link to="/login" className="link link-primary">
-                Sign in
-              </Link>
-            </div>
+              <div className="text-center">
+                <p className="text-base-content/60">Already have an account? </p>
+                <Link to="/login" className="link link-primary">
+                  Sign in
+                </Link>
+              </div>
           </div>
         </div>
       </div>

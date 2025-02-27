@@ -5,10 +5,14 @@ import cloudinary from "../lib/cloudinary.js";
 
 // creating a new user
 export const signup = async (req, res) => {
-  const { name, email, password } = req.body;
+  // console.log("body object-- ", req.body);
+  
+  const { fullName, email, password } = req.body;
 
   try {
-    if (!name || !email || !password) {
+    if (!fullName || !email || !password) {
+      console.log("not a valid entry");
+
       return res.status(400).json({
         message: "Please fill all the fields",
       });
@@ -16,36 +20,49 @@ export const signup = async (req, res) => {
 
     //verifying password
     if (password.length < 6) {
+      console.log("not valid pass");
+
       return res.status(400).json({
         message: "Password should be at least 6 characters long",
       });
     }
 
-    const user = await User.find({ email });
+    //check if user already exists
+    const user = await User.findOne({ email }).exec();
 
     if (user) {
+      console.log("user already present");
+
       return res.status(400).json({
         message: "User already exists",
       });
     }
 
-    const salt = bcrypt.genSalt(10);
-
-    const hashedPassword = bcrypt.hashSync(password, salt);
-
     // hash password
+    const salt = await bcrypt.genSalt(10);
+
+    const hashedPassword =  await bcrypt.hash(password, salt);
+
+    // create new user
     const newUser = await User.create({
-      name,
+      name: fullName,
       email,
       password: hashedPassword,
+    });
+
+    const token = generateToken(newUser._id);
+
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 1000,
     });
 
     res.status(201).json({
       _id: newUser._id,
       name: newUser.name,
       email: newUser.email,
-      pic: newUser.pic,
-      token: generateToken(newUser._id),
+      pic: newUser.pic || "",
+      token: token,
     });
   } catch (error) {
     console.log(" Error creating user-- ", error);
@@ -57,6 +74,9 @@ export const signup = async (req, res) => {
 
 // login user
 export const login = async (req, res) => {
+
+  console.log("request body from login cont. function--",req.body)
+  
   const { email, password } = req.body;
 
   try {
@@ -72,19 +92,23 @@ export const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
+      console.log("invalid credentials");
+      
       return res.status(400).json({
         message: "Invalid credentials",
       });
     }
 
-    generateToken(user._id);
+    const token = generateToken(user._id);
 
-    res.status(200).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      pic: user.pic,
+    console.log("token-- ",token);
+
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 1000,
     });
+
+    res.status(200).json(user);
   } catch (error) {
     console.log("login error-", error);
     res.status(500).json({
@@ -97,10 +121,12 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
   try {
     //simply clear the cookie
-    res.cookie("jwt", "", {
-      httpOnly: true,
-      expires: 0,
-    });
+    const cookieCleared = res.clearCookie("jwt");
+    console.log("cookieCleared--",cookieCleared);
+    
+    res.status(200).json({
+      message: "User logged out successfully",
+    })
   } catch (error) {
     res.status(500).json({
       message: "Internal server error: failed to logout",
@@ -152,6 +178,7 @@ export const updateProfile = async (req, res) => {
 // check authentication
 export const checkAuth = async (req, res) => {
   try {
+
     res.status(200).json(req.user);
   } catch (error) {
     console.log(" Error checking authentication", error.message);

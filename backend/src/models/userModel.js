@@ -18,6 +18,8 @@ const userModel = new mongoose.Schema({
     default:
       "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?20200418092106",
   },
+}, {
+  timestamps: true,
 });
 
 const User = mongoose.model("User", userModel);
