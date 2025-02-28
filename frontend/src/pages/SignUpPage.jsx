@@ -24,6 +24,7 @@ const SignUpPage = () => {
     if (success === true) signUp(formData);
   };
 
+
   // this will return true if the form is valid
   const validateForm = () => {
     if (formData.fullName === "") {

@@ -7,17 +7,23 @@ const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
   const [selectedImage, setSelectedImage ] = useState(null);
 
-  console.log(authUser);
+  console.log("authUser--", authUser);
 
   const handleImageUpload = (e) => {
+      // getting the selected file
       const fileInput = e.target.files[0];
 
       if(!fileInput) return;
 
+      //used to read the content of selected file
       const reader = new FileReader();
 
+      // readAsDataURL this method reads the contents of 
+      // the file and returns a data URL 
+      // (a base64-encoded string) representing the file.
       reader.readAsDataURL(fileInput);
 
+      //
       reader.onload = async () => {
           const base64String = reader.result;
           setSelectedImage(base64String);
