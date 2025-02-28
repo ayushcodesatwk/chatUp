@@ -75,7 +75,7 @@ export const signup = async (req, res) => {
 // login user
 export const login = async (req, res) => {
 
-  console.log("request body from login cont. function--",req.body)
+  console.log("request body from login function--",req.body)
   
   const { email, password } = req.body;
 
@@ -101,7 +101,7 @@ export const login = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    console.log("token-- ",token);
+    // console.log("token-- ",token);
 
     res.cookie("jwt", token, {
       httpOnly: true,
