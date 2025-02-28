@@ -8,10 +8,12 @@ import ProfilePage from "./pages/ProfilePage";
 import HomePage from "./pages/HomePage";
 import { useAuthStore } from "./store/userAuthStore";
 import { Toaster } from "react-hot-toast";
+import { useThemeStore } from "./store/useThemeStore";
 
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const { theme } = useThemeStore();
 
   // if (isCheckingAuth && !authUser) {
   //   return (
