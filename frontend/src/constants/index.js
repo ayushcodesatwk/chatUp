@@ -1,5 +1,5 @@
 export const THEMES =[
- "light",
+"light",
 "dark",
 "cupcake",
 "retro",
@@ -12,6 +12,7 @@ export const THEMES =[
 "lofi",
 "pastel",
 "fantasy",
+"sunset",
 "wireframe",
 "black",
 "luxury",
@@ -23,10 +24,10 @@ export const THEMES =[
 "dracula",
 "acid",
 "lemonade",
-"procyon",
-"neon",
 "corporate",
-"minimalist",
-"cosmic",
-"vintage"
+"nord",
+"dim",
+"autumn",
+"lofi",
+"synthwave",
 ];

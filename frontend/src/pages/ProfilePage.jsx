@@ -7,7 +7,7 @@ const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
   const [selectedImage, setSelectedImage ] = useState(null);
 
-  console.log("authUser--", authUser);
+  // console.log("authUser--", authUser);
 
   const handleImageUpload = (e) => {
       // getting the selected file
@@ -33,7 +33,7 @@ const ProfilePage = () => {
 
   return (
     <>
-      <div className="h-screen pt-20 ">
+      <div className="h-fit pt-20 ">
         <div className="max-w-2xl mx-auto p-4 py-8">
           <div className="space-y-8 bg-base-300 rounded-xl p-6">
             {/* heading section */}

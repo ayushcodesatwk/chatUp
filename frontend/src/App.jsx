@@ -15,6 +15,9 @@ function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
   const { theme } = useThemeStore();
 
+  console.log("theme--",theme);
+  
+
   // if (isCheckingAuth && !authUser) {
   //   return (
   //     <>
@@ -31,6 +34,8 @@ function App() {
 
   return (
     <>
+    <div data-theme={theme}>
+
       <BrowserRouter>
         {/* navbar on top */}
         <Navbar />
@@ -43,6 +48,7 @@ function App() {
         </Routes>
       </BrowserRouter>
       <Toaster/>
+    </div>
     </>
   );
 }

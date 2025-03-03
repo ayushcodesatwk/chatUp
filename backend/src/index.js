@@ -28,7 +28,7 @@ app.use(cookieParser());
 
 //all routes
 app.use("/api/auth", authRoutes);
-app.use("/api/message", messageRoutes);
+app.use("/api/messages", messageRoutes);
 
 app.listen(port, () => {
   console.log("Server started on port- ", port);

@@ -23,7 +23,10 @@ const LoginPage = () => {
 
     const success = validateForm();
 
-    if(success) login(formData);
+    console.log("succeed validating form--", success);
+    
+
+    if(success === true) login(formData);
 
   }
 
