@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
 import { axiosInstance } from "../lib/axios";
-import axios from "axios";
 
 export const useChatStore = create((set, get) => ({
   messages: [],
@@ -27,9 +26,12 @@ export const useChatStore = create((set, get) => ({
     set({ isMessagesLoading: true });
 
     try {
+      
       const res = await axiosInstance.get(`messages/${userId}`);
 
-      set({ message: res.data });
+      console.log("messages--", res);
+
+      set({ messages: res.data });
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
@@ -52,6 +54,14 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * Sets the selected user in the chat store.
+ * 
+ * @param {Object} selectedUser - The user object to be set as the selected user.
+ */
+
+/******  dd855a43-52a8-4e89-a618-8ef52adc26ab  *******/
   setSelectedUser: async ( selectedUser ) => {
     set({ selectedUser });
   }
