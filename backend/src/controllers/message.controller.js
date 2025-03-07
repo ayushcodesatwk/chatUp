@@ -1,7 +1,7 @@
 import User from "../models/userModel.js";
 import Message from "../models/messageModel.js";
 import cloudinary from "../lib/cloudinary.js";
-
+import { getReceieverSocketId, io } from "../lib/socket.js";
   
 export const getUsersForSidebar = async (req, res) => {
     
@@ -32,8 +32,8 @@ export const getMessages = async (req, res) => {
     
         const messages = await Message.find({
             $or: [
-                { senderId: senderId, receieverId: userToChatId },
-                { senderId: userToChatId, receieverId: senderId },
+                { senderId: senderId, receiverId: userToChatId },
+                { senderId: userToChatId, receiverId: senderId },
             ],
         })
 
@@ -54,6 +54,7 @@ export const sendMessage = async ( req, res) => {
         try {
             
             const { text, image } = req.body;
+            const {id: receiverId} = req.params;
 
             const senderId = req.user._id;
 
@@ -67,7 +68,7 @@ export const sendMessage = async ( req, res) => {
 
             const message = await Message.create({
                 senderId,
-                receieverId: req.params.id,
+                receiverId,
                 text,
                 image: imageUrl,
             });
@@ -75,7 +76,12 @@ export const sendMessage = async ( req, res) => {
             await message.save();
 
             // realtime functionality from here-- socket.io
+            const receiverSocketId = getReceieverSocketId(receiverId);
 
+            // if user is online
+            if(receiverSocketId){
+                io.to(receiverSocketId).emit("newMessage", message);;
+            };
         
             res.status(200).json(message);
 

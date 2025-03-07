@@ -25,11 +25,13 @@ export const useChatStore = create((set, get) => ({
   getMessages: async (userId) => {
     set({ isMessagesLoading: true });
 
+    console.log("userId--", userId);
+    
+
     try {
-      
       const res = await axiosInstance.get(`messages/${userId}`);
 
-      console.log("messages--", res);
+      console.log("get messages--", res);
 
       set({ messages: res.data });
     } catch (error) {
@@ -40,29 +42,37 @@ export const useChatStore = create((set, get) => ({
   },
 
   sendMessage: async (data) => {
-    
     const { selectedUser, messages } = get();
     console.log("selected user data--", data);
 
     try {
-      const res = await axiosInstance.post(`messages/send/${selectedUser._id}`, data);
+      const res = await axiosInstance.post(
+        `messages/send/${selectedUser._id}`,
+        data
+      );
 
-      set({ messages: [...messages, res.data]});
-
+      set({ messages: [...messages, res.data] });
     } catch (error) {
       toast.error(error.response.data.message);
     }
   },
 
-/*************  ✨ Codeium Command ⭐  *************/
-/**
- * Sets the selected user in the chat store.
- * 
- * @param {Object} selectedUser - The user object to be set as the selected user.
- */
+  subscribeToMessages: (socket) => {
+    const { selectedUser } = get();
 
-/******  dd855a43-52a8-4e89-a618-8ef52adc26ab  *******/
-  setSelectedUser: async ( selectedUser ) => {
+    if (!selectedUser) return;
+
+    // subscriber to newMessages
+    socket.on("newMessage", (newMessage) => {
+      set({ messages: [...get().messages, newMessage] });
+    });
+  },
+
+  unsubscribeFromMessages: (socket) => {
+    socket.off("newMessage");
+  },
+
+  setSelectedUser: async (selectedUser) => {
     set({ selectedUser });
-  }
+  },
 }));

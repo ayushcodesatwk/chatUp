@@ -25,7 +25,7 @@ export const protectRoute = async (req, res, next) => {
     // finds the user without password
     const user = await User.findById(decoded.id).select("-password");
 
-    console.log("user from middleware--", user);
+    // console.log("user from middleware--", user);
 
     req.user = user;
 
